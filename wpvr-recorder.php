@@ -2,7 +2,7 @@
 /*
 Plugin Name: WP Voice Recorder
 Plugin URI:
-Description: this recorder will record the audio of published and draft post data.
+Description: WP Voice Recorder will help record your voice and play your posts content in front end.
 Version: 1.0
 Author: Kumar Parth
 Author URI: 
