@@ -7,9 +7,9 @@ Version: 1.0
 Author: Kumar Parth
 Author URI: 
 */
-include("lib/wpvr_voice_meta.php");
+include( 'lib/wpvr_voice_meta.php' );
 # Include the Dropbox SDK libraries
-include("dropbox-sdk/Dropbox/autoload.php");
+include( 'dropbox-sdk/Dropbox/autoload.php' );
 use \Dropbox as dbx;
 global $file_urls;
 global $post_ids;
@@ -21,10 +21,9 @@ $post_ids  = array();
 * @return none
 */
 function add_scripts() {
-	wp_enqueue_style('jplayercss',plugins_url( 'skin/jplayer.blue.monday.css',__FILE__));
-	wp_enqueue_script( 'jplayer',plugins_url( 'js/jquery.jplayer.min.js' , __FILE__ ), array('jquery') );
-	wp_enqueue_script( 'jplayerjs',plugins_url( 'js/mfsjplayer.js',__FILE__), array('jquery'), '', true ); 
-	
+	wp_enqueue_style( 'jplayercss', plugins_url( 'skin/jplayer.blue.monday.css',__FILE__ ) );
+	wp_enqueue_script( 'jplayer', plugins_url( 'js/jquery.jplayer.min.js' , __FILE__ ), array( 'jquery' ) );
+	wp_enqueue_script( 'jplayerjs', plugins_url( 'js/mfsjplayer.js',__FILE__ ), array( 'jquery' ), '', true ); 
 }
 add_action( 'wp_enqueue_scripts', 'add_scripts' );
 
@@ -33,16 +32,16 @@ add_action( 'wp_enqueue_scripts', 'add_scripts' );
 * @return none
 */
 function add_style() {
-	wp_enqueue_style('jplayercss',plugins_url( 'skin/jplayer.blue.monday.css',__FILE__));
+	wp_enqueue_style( 'jplayercss', plugins_url( 'skin/jplayer.blue.monday.css',__FILE__ ) );
 }
-add_action( 'wp_enqueue_style', 'add_style');
+add_action( 'wp_enqueue_style', 'add_style' );
 /*  Function for adding subdirectory for post recorded files into the uploads folder on plugin activation
 * @param none
 * @return none
 */
 function wpvr_voice_activation() {   
 	$upload_dir = wp_upload_dir();
-	$upload_loc = $upload_dir['basedir']."/recorded_files";
+	$upload_loc = $upload_dir['basedir'] . '/recorded_files';
 	if ( ! is_dir( $upload_loc ) ) {
 		wp_mkdir_p( $upload_loc ); 
 	}
@@ -57,13 +56,13 @@ register_activation_hook( __FILE__, 'wpvr_voice_activation' );
 function wpvr_admin_scripts( $hook_suffix ) {																						
 	wp_enqueue_script( 'jquerymin',plugins_url( 'js/jquery.min.js' , __FILE__ ) );
 	$get_api_token = get_option( 'dropbox_api_token' );
-	if( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) {
+	if ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) {
 		if ( isset( $get_api_token ) && ! empty( $get_api_token ) ) {
-			wp_enqueue_script( 'jrecorder',plugins_url( 'js/jRecorder.js' , __FILE__ ),array('jquerymin'));   
-			wp_enqueue_script( 'audiorec',plugins_url( 'js/wpvr_audio_recorder.js' , __FILE__ ),array('jrecorder') );
+			wp_enqueue_script( 'jrecorder', plugins_url( 'js/jRecorder.js' , __FILE__ ), array( 'jquerymin' ) );   
+			wp_enqueue_script( 'audiorec', plugins_url( 'js/wpvr_audio_recorder.js' , __FILE__ ), array( 'jrecorder' ) );
 			$site_parameters = array(
 				'plugins_url' => plugins_url(), 
-				'post_id' =>  get_the_ID()
+				'post_id' => get_the_ID(),
 			);
 			wp_localize_script( 'audiorec', 'wpvr_audio', $site_parameters );  
 			wp_localize_script( 'jrecorder', 'wpvr_variables', $site_parameters );  
@@ -73,7 +72,7 @@ function wpvr_admin_scripts( $hook_suffix ) {
 		}
 	}
 }
-add_action( 'admin_enqueue_scripts', 'wpvr_admin_scripts');
+add_action( 'admin_enqueue_scripts', 'wpvr_admin_scripts' );
 
 /**
  * Add the jplayer to each post having recorded audio
@@ -84,18 +83,18 @@ function the_content_filter( $content ) {
 	
 	global $file_urls;
 	global $post_ids;
-	$post_id  		=  $GLOBALS['post']->ID;
+	$post_id  		= $GLOBALS['post']->ID;
 	$accessToken 	= get_option( 'dropbox_api_token' );
-	$dbxClient 		= new dbx\Client($accessToken, "PHP-Example/1.0");
-	$file_url_array = $dbxClient->createTemporaryDirectLink( "/recorded_file".$post_id.".wav" );
+	$dbxClient 		= new dbx\Client( $accessToken, 'PHP-Example/1.0' );
+	$file_url_array = $dbxClient->createTemporaryDirectLink( '/recorded_file'.$post_id.'.wav' );
 	$file_url 		= isset( $file_url_array ) ? $file_url_array[0] : '';
 	if ( ! empty( $file_url ) ) {
 		$post_ids[] 	= $post_id;
 		$file_urls[] 	= $file_url;
-		require( "lib/wpvr_jplayer_interface.php" );		
+		require( 'lib/wpvr_jplayer_interface.php' );		
 	}
 	// Add play and record buttons to each post
-    // Returns the content.
+	// Returns the content.
     return $content;
 }
 add_filter( 'the_content', 'the_content_filter', 20 );
@@ -129,13 +128,13 @@ add_action( 'admin_menu', 'wpvr_recorder_submenu' );
 function wpvr_recorder_submenu_page_callback() {
 	?>
 	  <div class="wrap">
-        <?php screen_icon('themes'); ?> <h2>WP Voice Recorder Settings</h2>
-		<?php if ( isset( $_POST["update_settings"] ) && ! empty ( $_POST["update_settings"] ) ) {
+        <?php screen_icon( 'themes' ); ?> <h2>WP Voice Recorder Settings</h2>
+		<?php if ( isset( $_POST['update_settings'] ) && ! empty ( $_POST['update_settings'] ) ) {
 				// Do the saving
-				$dropbox_api_token = esc_attr( $_POST["dropbox_api_token"] );   
-				update_option( "dropbox_api_token", $dropbox_api_token );
+				$dropbox_api_token = esc_attr( $_POST['dropbox_api_token'] );   
+				update_option( 'dropbox_api_token', $dropbox_api_token );
 				echo '<div id="message" class="updated">Settings saved</div>';
-				if ( empty( $_POST["dropbox_api_token"] ) )
+				if ( empty( $_POST['dropbox_api_token'] ) )
 					echo '<div id="message" class="error">Please fill in your Dropbox credential</div>';
 			}
 			$dropbox_api_token = get_option( 'dropbox_api_token' );   

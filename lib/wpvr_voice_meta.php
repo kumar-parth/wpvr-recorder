@@ -10,15 +10,15 @@
 *@return none
 */
 function add_audio_recorder() {
-$get_api_token = get_option( 'dropbox_api_token' );
-if ( isset( $get_api_token ) && ! empty( $get_api_token ) ) {
-	add_meta_box(                                                  
-			'wpvr_post_recorder',
-			__( 'WP Post Recorder', 'myplugin_textdomain' ),
-			'wpvr_record_box',
-			'post','side'
-	);
-}
+	$get_api_token = get_option( 'dropbox_api_token' );
+	if ( isset( $get_api_token ) && ! empty( $get_api_token ) ) {
+		add_meta_box(                                                  
+				'wpvr_post_recorder',
+				__( 'WP Post Recorder', 'myplugin_textdomain' ),
+				'wpvr_record_box',
+				'post','side'
+		);
+	}
 }
 add_action( 'add_meta_boxes', 'add_audio_recorder' );
 /* Function to add metabox for the recorder
@@ -35,7 +35,7 @@ function wpvr_record_box() {
 				Time: <span id="time">00:00</span>
 				</div>';
 		$html .= '<label for="record">';
-		$html .= _e( "record your voice", 'myplugin_textdomain' );
+		$html .= _e( 'record your voice', 'myplugin_textdomain' );
 		$html .= '</label> ';
 		$html .= '<div>
 				 Level: <span id="level"></span>
@@ -57,9 +57,9 @@ function wpvr_record_box() {
 function wpvr_save_audio( $post_id ) {
 	$get_api_token = get_option( 'dropbox_api_token' );
 	if ( isset( $get_api_token ) && ! empty( $get_api_token ) ) {
-		$rec_upload_file= wp_upload_dir();
-		$rec_path = $rec_upload_file['baseurl'];
-		$record_file = 'recorded_file'.$post_id;
+		$rec_upload_file = wp_upload_dir();
+		$rec_path 		 = $rec_upload_file['baseurl'];
+		$record_file 	 = 'recorded_file'.$post_id;
 		update_post_meta( $post_id,'record_file', $rec_path . '/recorded_files/'. $record_file . '.wav' );
 	}
 }

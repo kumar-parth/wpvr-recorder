@@ -1,8 +1,8 @@
 <?php
 $post_id = get_the_ID();
 ?>
-<div id="jquery_jplayer_<?php echo $post_id ?>" class="jp-jplayer"></div>
-  <div id="jp_container_<?php echo $post_id ?>" class="jp-audio">
+<div id="jquery_jplayer_<?php echo esc_attr( $post_id ); ?>" class="jp-jplayer"></div>
+  <div id="jp_container_<?php echo esc_attr( $post_id ); ?>" class="jp-audio">
     <div class="jp-type-single">
       <div class="jp-gui jp-interface">
         <ul class="jp-controls">
