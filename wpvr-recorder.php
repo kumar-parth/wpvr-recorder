@@ -7,7 +7,7 @@ Version: 1.0
 Author: Kumar Parth
 Author URI: 
 */
-include( 'lib/wpvr_voice_meta.php' );
+include( 'lib/wpvr-voice-meta.php' );
 # Include the Dropbox SDK libraries
 include( 'dropbox-sdk/Dropbox/autoload.php' );
 use \Dropbox as dbx;
@@ -59,7 +59,7 @@ function wpvr_admin_scripts( $hook_suffix ) {
 	if ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) {
 		if ( isset( $get_api_token ) && ! empty( $get_api_token ) ) {
 			wp_enqueue_script( 'jrecorder', plugins_url( 'js/jRecorder.js' , __FILE__ ), array( 'jquerymin' ) );   
-			wp_enqueue_script( 'audiorec', plugins_url( 'js/wpvr_audio_recorder.js' , __FILE__ ), array( 'jrecorder' ) );
+			wp_enqueue_script( 'audiorec', plugins_url( 'js/wpvr-audio-recorder.js' , __FILE__ ), array( 'jrecorder' ) );
 			$site_parameters = array(
 				'plugins_url' => plugins_url(), 
 				'post_id' => get_the_ID(),
@@ -91,7 +91,7 @@ function the_content_filter( $content ) {
 	if ( ! empty( $file_url ) ) {
 		$post_ids[] 	= $post_id;
 		$file_urls[] 	= $file_url;
-		require( 'lib/wpvr_jplayer_interface.php' );		
+		require( 'lib/wpvr-jplayer-interface.php' );		
 	}
 	// Add play and record buttons to each post
 	// Returns the content.
