@@ -53,19 +53,19 @@ register_activation_hook( __FILE__, 'wpvr_voice_activation' );
 * @param none
 * @return none
 */
-function wpvr_admin_scripts( $hook_suffix ) {																						
-	wp_enqueue_script( 'jquerymin',plugins_url( 'js/jquery.min.js' , __FILE__ ) );
+function wpvr_admin_scripts( $hook_suffix ) {		
 	$get_api_token = get_option( 'dropbox_api_token' );
 	if ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) {
 		if ( isset( $get_api_token ) && ! empty( $get_api_token ) ) {
-			wp_enqueue_script( 'jrecorder', plugins_url( 'js/jRecorder.js' , __FILE__ ), array( 'jquerymin' ) );   
+			wp_enqueue_script( 'jrecorder', plugins_url( 'js/jRecorder.js' , __FILE__ ), array('jquery') );   
 			wp_enqueue_script( 'audiorec', plugins_url( 'js/wpvr-audio-recorder.js' , __FILE__ ), array( 'jrecorder' ) );
 			$site_parameters = array(
 				'plugins_url' => plugins_url(), 
 				'post_id' => get_the_ID(),
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			);
 			wp_localize_script( 'audiorec', 'wpvr_audio', $site_parameters );  
-			wp_localize_script( 'jrecorder', 'wpvr_variables', $site_parameters );  
+			wp_localize_script( 'jrecorder', 'wpvr_variables', $site_parameters ); 
 		}
 		else {
 			echo '<div id="message" class="error">Please Update Dropbox API access token in order to use WP Voice Recorder!!</div>';
@@ -74,13 +74,38 @@ function wpvr_admin_scripts( $hook_suffix ) {
 }
 add_action( 'admin_enqueue_scripts', 'wpvr_admin_scripts' );
 
+add_action( 'wp_ajax_wpvr_upload_file', 'wpvr_upload_file' );
+add_action( 'wp_ajax_nopriv_wpvr_upload_file', 'wpvr_upload_file' );
+function wpvr_upload_file() {
+		$upload_dir = wp_upload_dir();		
+		//save the path in the uploads folder
+		$upload_path = $upload_dir['basedir'] . '/recorded_files';
+		$url = wp_get_referer();
+		$host = parse_url($url, PHP_URL_QUERY);
+		$split_url = explode( 'filename=',$host );
+		$url_filename = $split_url[1];
+		$filename = rtrim( $url_filename, '?action=wpvr_upload_file' );
+		$fp 	  	 = fopen( $upload_path.'/'.$filename.'.wav', 'wb' );
+		fwrite( $fp, file_get_contents( 'php://input' ) );
+		fclose( $fp ); 
+		# Include the Dropbox SDK libraries
+		$accessToken 		= get_option( 'dropbox_api_token' );
+		$dbxClient   		= new dbx\Client( $accessToken, 'PHP-Example/1.0' );
+		$search_old_record	= $dbxClient->searchFileNames( '/', $filename.'.wav', null, false );
+		if ( ! empty ( $search_old_record ) )
+			$delete_old_record	= $dbxClient->delete( '/'.$filename.'.wav' );
+		$f 		= fopen( $upload_path.'/'.$filename.'.wav', 'rb' );
+		$result = $dbxClient->uploadFile( '/'.$filename.'.wav', dbx\WriteMode::add(), $f );
+		fclose( $f );
+		unlink( $upload_path.'/'.$filename.'.wav' );
+}
+
 /**
  * Add the jplayer to each post having recorded audio
  * @param string content of recorded file
  * @return string content of recorded file
  */
 function the_content_filter( $content ) {
-	
 	global $file_urls;
 	global $post_ids;
 	$post_id  		= $GLOBALS['post']->ID;

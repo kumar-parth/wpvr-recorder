@@ -1,8 +1,9 @@
-jQuery(function($){
+var $ = jQuery.noConflict();
+$(document).ready(function(){
+	var host_url = wpvr_audio.ajaxurl + '/filename=recorded_file' + wpvr_audio.post_id + '?action=wpvr_upload_file';
   $.jRecorder(
-     
      { 
-        host:  wpvr_audio.plugins_url + '/wpvr-recorder/lib/acceptfile.php?filename=recorded_file' + wpvr_audio.post_id,  
+        host: host_url,  
         callback_started_recording:     function(){callback_started(); },
         callback_stopped_recording:     function(){callback_stopped(); },
         callback_activityLevel:         function(level){callback_activityLevel(level); },
@@ -14,11 +15,14 @@ jQuery(function($){
    
 	  $('#record').click(function() {
 		 $.jRecorder.record(3600);
+		 
 	  })
 	  
 	  $('#stop').click(function() {
 		$.jRecorder.stop();
 		$.jRecorder.sendData();
+		
+
 	  })
 	  
 	  function callback_finished()

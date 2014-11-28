@@ -21,7 +21,8 @@ Added seperate function sendData to trigger to send data to server (it won't sen
 
 /* Code is not verified using http://www.jshint.com/ */
 
-(function ($){	
+var $ = jQuery.noConflict(); 
+$(document).ready(function (){	
 	var methods = {
     	play : function( options ) { 
 					
@@ -64,7 +65,7 @@ Added seperate function sendData to trigger to send data to server (it won't sen
 						'wmode' : 'transparent',
 						'bgcolor': '#ff0000',
 						'swf_path': wpvr_variables.plugins_url + '/wpvr-recorder/js/jRecorder.swf',
-						'host' :  wpvr_variables.plugins_url + '/wpvr-recorder/lib/acceptfile.php?filename=recorded_file'+ wpvr_variables.post_id, 
+						'host' :  wpvr_variables.ajaxurl + '/filename=recorded_file' + wpvr_variables.post_id + '?action=wpvr_upload_file',
 						'callback_started_recording' : function(){},
 						'callback_finished_recording' : function(){},
 						'callback_stopped_recording': function(){},
@@ -132,7 +133,6 @@ Added seperate function sendData to trigger to send data to server (it won't sen
 								//change z-index to make it top
 								$(  '#' + jRecorderSettings['recorderlayout_id'] ).css('z-index', 1000);
 								var recorder = getFlashMovie(jRecorderSettings['recorder_name']);
-								console.log( recorder );
 								getFlashMovie(jRecorderSettings['recorder_name']).jStartRecording(max_time);
 								
 						} 
@@ -145,7 +145,9 @@ Added seperate function sendData to trigger to send data to server (it won't sen
 		
 	//function call to send wav data to server url from the init configuration					
 	$.jRecorder.sendData = function(){
-		getFlashMovie(jRecorderSettings['recorder_name']).jSendFileToServer();							
+		var recorded = getFlashMovie(jRecorderSettings['recorder_name']);
+		console.log( recorded );
+		recorded.jSendFileToServer();	
 	} 
 
 	$.jRecorder.callback_started_recording = function(){
@@ -187,7 +189,7 @@ Added seperate function sendData to trigger to send data to server (it won't sen
        return (isIE) ? window[movieName] : document[movieName];
      }	
 	 
-})(jQuery);
+});
 
 
 
