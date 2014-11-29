@@ -20,21 +20,21 @@ $post_ids  = array();
 * @param none
 * @return none
 */
-function add_scripts() {
+function wpvr_add_scripts() {
 	wp_enqueue_style( 'jplayercss', plugins_url( 'skin/jplayer.blue.monday.css',__FILE__ ) );
 	wp_enqueue_script( 'jplayer', plugins_url( 'js/jquery.jplayer.min.js' , __FILE__ ), array( 'jquery' ) );
 	wp_enqueue_script( 'jplayerjs', plugins_url( 'js/mfsjplayer.js',__FILE__ ), array( 'jquery' ), '', true ); 
 }
-add_action( 'wp_enqueue_scripts', 'add_scripts' );
+add_action( 'wp_enqueue_scripts', 'wpvr_add_scripts' );
 
 /* function to enqueue style for the plugin
 * @param none
 * @return none
 */
-function add_style() {
+function wpvr_add_style() {
 	wp_enqueue_style( 'jplayercss', plugins_url( 'skin/jplayer.blue.monday.css',__FILE__ ) );
 }
-add_action( 'wp_enqueue_style', 'add_style' );
+add_action( 'wp_enqueue_style', 'wpvr_add_style' );
 /*  Function for adding subdirectory for post recorded files into the uploads folder on plugin activation
 * @param none
 * @return none
@@ -105,7 +105,7 @@ function wpvr_upload_file() {
  * @param string content of recorded file
  * @return string content of recorded file
  */
-function the_content_filter( $content ) {
+function wpvr_content_filter( $content ) {
 	global $file_urls;
 	global $post_ids;
 	$post_id  		= $GLOBALS['post']->ID;
@@ -122,9 +122,9 @@ function the_content_filter( $content ) {
 	// Returns the content.
     return $content;
 }
-add_filter( 'the_content', 'the_content_filter', 20 );
+add_filter( 'the_content', 'wpvr_content_filter', 20 );
 
-function run_script() {
+function wpvr_run_script() {
 	global $file_urls;
 	global $post_ids;
 	$site_parameters = array(
@@ -136,7 +136,7 @@ function run_script() {
 			//echo $file_url;
 	wp_localize_script( 'jplayerjs', 'wpvr_var', $site_parameters );
 }
-add_action( 'wp_footer' , 'run_script' );
+add_action( 'wp_footer' , 'wpvr_run_script' );
 /*
 * Add a submenu in the settings for wpvr_recorder to add options 
 *
