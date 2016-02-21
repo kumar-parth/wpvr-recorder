@@ -44,5 +44,5 @@ If you have any suggestions for a new plugin, feel free to email me at parthbhus
 == Upgrade Notice ==
 
 == Screenshots ==
-2. screenshot-2.png
-3. screenshot-3.png
+2. screenshot-1.png
+3. screenshot-2.png
